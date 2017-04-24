@@ -90,3 +90,13 @@ ENV/
 
 # Package
 conversion/
+
+# Data
+din
+dout
+jin
+jout
+ein
+eout
+test.py
+*.csv
