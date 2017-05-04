@@ -2,7 +2,7 @@ import functools
 import multiprocessing
 import os
 
-ENVOWEL = set(['a', 'e', 'i', 'o', 'u', 'ə', 'ɑ', 'æ', 'ʊ', 'ɪ', 'ɔ'])
+ENVOWEL = set(['a', 'e', 'i', 'o', 'u', 'ə', 'ɑ', 'æ', 'ʊ', 'ɪ', 'ɔ', 'ɛ'])
 JPVOWEL = set(['a', 'e', 'i', 'o', 'u'])
 
 def preprocess(j):
@@ -94,8 +94,24 @@ def editDist(j, e, m, n):
     # If character with '͡' encountered
     if (m > 2 and j[m-2] == '͡') or (n > 2 and e[n-2] == '͡'):
 
-        if j[m-1] == e[n-1] and j[m-2] == e[n-2] and j[m-1] == e[n-1]:
+        if j[m-1] == e[n-1] and j[m-3] == e[n-3]:
             return editDist(j, e, m-3, n-3)
+
+        if m > 2 and j[m-2] == '͡' and n > 2 and e[n-2] == '͡':
+            IS, RM, RP = [editDist(j, e, m, n-3)     # Insert
+                        , editDist(j, e, m-3, n)     # Remove
+                        , editDist(j, e, m-3, n-3)]  # Replace
+            MIN = min(IS[0], RM[0], RP[0])
+            if MIN == IS[0]:
+                s=IS[1][:]
+                s.append((m-1, ("i", e[n-3:n])))
+            elif MIN == RM[0]:
+                s=RM[1][:]
+                s.append((m-1, ("d", j[m-3:m])))
+            else:
+                s=RP[1][:]
+                s.append((m-1, ("c", e[n-3:n])))
+            return (1 + MIN, s)
 
         if j[m-2] == '͡':
             IS, RM, RP = [editDist(j, e, m, n-1)     # Insert
@@ -120,13 +136,21 @@ def editDist(j, e, m, n):
             MIN = min(IS[0], RM[0], RP[0])
             if MIN == IS[0]:
                 s=IS[1][:]
-                s.append((m-1, ("i", e[n-1])))
+                s.append((m-1, ("i", e[n-3:n])))
             elif MIN == RM[0]:
                 s=RM[1][:]
                 s.append((m-1, ("d", j[m-1])))
-            else:
+            elif j[m-1] not in JPVOWEL:
                 s=RP[1][:]
                 s.append((m-1, ("c", e[n-3:n])))
+            else:
+                MIN = min(IS[0], RM[0])
+                if MIN == IS[0]:
+                    s=IS[1][:]
+                    s.append((m-1, ("i", e[n-3:n])))
+                else:
+                    s=RM[1][:]
+                    s.append((m-1, ("d", j[m-1])))
             return (1 + MIN, s)
 
     # If last characters of two strings are same, nothing
