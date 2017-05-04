@@ -1,10 +1,17 @@
 def transcript(wi):
     t = wi
     t = t.replace('r', 'ɹ')
+    t = t.replace('ja', 'd͡ʒja')
+    t = t.replace('ju', 'd͡ʒju')
+    t = t.replace('jo', 'd͡ʒjo')
     t = t.replace('j', 'd͡ʒ')
     t = t.replace('sha', 'ʃja')
+    t = t.replace('shu', 'ʃju')
+    t = t.replace('sho', 'ʃjo')
     t = t.replace('sh', 'ʃ')
     t = t.replace('cha', 't͡ʃja')
+    t = t.replace('chu', 't͡ʃju')
+    t = t.replace('cho', 't͡ʃjo')
     t = t.replace('ch', 't͡ʃ')
     t = t.replace('ts', 't͡s')
     t = t.replace('y', 'j')
@@ -40,7 +47,7 @@ n = int(input())  # read a line with a single integer
 for i in range(1, n + 1):
     w = input()
     t = transcript(w)
-    t = t.replace('-', '').replace(' ','')
+    t = t.replace('-', '').replace(' ','').replace('(','').replace(')','')
     # ti = index_t(t)
     # print("{}, {}".format(t, ti))
     print(t)
