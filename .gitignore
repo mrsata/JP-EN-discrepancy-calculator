@@ -92,11 +92,7 @@ ENV/
 conversion/
 
 # Data
-din
-dout
-jin
-jout
-ein
-eout
+*in*
+*out*
 test.py
 *.csv
