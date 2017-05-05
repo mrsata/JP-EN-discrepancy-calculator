@@ -1,8 +1,10 @@
 import functools
 import multiprocessing
 import os
+import jtranscript as jt
+import etranscript as et
 
-ENVOWEL = set(['a', 'e', 'i', 'o', 'u', 'ə', 'ɑ', 'æ', 'ʊ', 'ɪ', 'ɔ', 'ɛ'])
+ENVOWEL = set(['a', 'e', 'i', 'o', 'u', 'æ', 'ɑ', 'ɔ', 'ə', 'ɛ', 'ɪ', 'ʊ'])
 JPVOWEL = set(['a', 'e', 'i', 'o', 'u'])
 
 def preprocess(j):
@@ -78,7 +80,7 @@ def generate_lists(j, e, rule):
             counter += 1
     return (jap_results, eng_results, replace_results)
 
-def discrepancy(j, e):
+def mailrule(j, e):
     main_rule = editDist(j, e, len(j), len(e))[1]
     return main_rule
 
@@ -189,16 +191,25 @@ def editDist(j, e, m, n):
 def proc(pair):
     j, e = pair
     no_sokuon, pre_rule = preprocess(j)
-    main_rule = discrepancy(no_sokuon, e)
+    main_rule = mailrule(no_sokuon, e)
     final_rule = alignment(pre_rule, main_rule)
     jp, en, rp = generate_lists(j, e, final_rule)
-    return "{}, {}, {}".format(jp, en, rp)
+    return "{}, {}, {}, {}, {}".format(j, e, jp, en, rp)
 
-n = int(input())  # read a line with a single integer
-pairs = []
-for i in range(1, n+1):
-    j, e = [s for s in input().split(" ")]
-    pairs.append((j, e))
-with multiprocessing.Pool(8) as p:
-    results = p.map(proc, pairs)
-print("\n".join(results))
+def discrepancy(j, e):
+    return proc((jt.jtranscript(j), et.etranscript(e)))
+
+def main():
+    pairs = []
+    while True:
+        try:
+            j, e = [s for s in input().split(" ")]
+            pairs.append((j, e))
+        except EOFError:
+            break
+    with multiprocessing.Pool(8) as p:
+        results = p.map(proc, pairs)
+    print("\n".join(results))
+
+if __name__ == '__main__':
+    main()
