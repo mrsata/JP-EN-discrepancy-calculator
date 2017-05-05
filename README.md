@@ -8,4 +8,4 @@ For example, if you give such an input:
 
 The output would be like this:
 
-`basuketto, basket, b1a2s3u4k5e6t7t8o9, b1a2s3k5e6t8, 4.u/ø 7.t/ø 9.o/ø`
+`basuketto, bæskət, b1a2s3u4k5e6t7t8o9, b1æ2s3k5ə6t8, 2.a/æ 4.u/ø 6.e/ə 7.t/ø 9.o/ø `
