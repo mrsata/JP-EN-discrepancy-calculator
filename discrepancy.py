@@ -80,7 +80,7 @@ def generate_lists(j, e, rule):
             counter += 1
     return (jap_results, eng_results, replace_results)
 
-def mailrule(j, e):
+def process(j, e):
     main_rule = editDist(j, e, len(j), len(e))[1]
     return main_rule
 
@@ -188,16 +188,14 @@ def editDist(j, e, m, n):
             s.append((m-1, ("d", j[m-1])))
     return (1 + MIN, s)
 
-def proc(pair):
+def discrepancy(pair):
     j, e = pair
+    j, e = jt.jtranscript(j), et.etranscript(e)
     no_sokuon, pre_rule = preprocess(j)
-    main_rule = mailrule(no_sokuon, e)
+    main_rule = process(no_sokuon, e)
     final_rule = alignment(pre_rule, main_rule)
     jp, en, rp = generate_lists(j, e, final_rule)
     return "{}, {}, {}, {}, {}".format(j, e, jp, en, rp)
-
-def discrepancy(j, e):
-    return proc((jt.jtranscript(j), et.etranscript(e)))
 
 def main():
     pairs = []
@@ -208,7 +206,7 @@ def main():
         except EOFError:
             break
     with multiprocessing.Pool(8) as p:
-        results = p.map(proc, pairs)
+        results = p.map(discrepancy, pairs)
     print("\n".join(results))
 
 if __name__ == '__main__':
